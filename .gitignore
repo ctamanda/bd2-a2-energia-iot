@@ -1,0 +1,18 @@
+# VS Code
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+
+# Docker
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos grandes (excedem o limite de 100 MB do GitHub)
+# Dados gerados - cada um deve gerar localmente a partir do ZIP do professor
+arquivos_originais/init/02-dados.sql
+arquivos_originais/src/gerar_dados.py

@@ -1,0 +1,8 @@
+# Override local — NÃO altera os arquivos do professor.
+# Motivo: a porta 55506 cai numa faixa reservada pelo Windows (Hyper-V/WinNAT),
+# então mapeamos o Postgres para 15432 no host. Container continua em 5432.
+# Uso: docker compose -f arquivos_originais/compose.yaml -f compose.override.yaml up -d --no-deps postgres
+services:
+  postgres:
+    ports: !override
+      - "15432:5432"
