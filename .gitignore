@@ -1,0 +1,13 @@
+# VS Code
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+
+# Docker
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db

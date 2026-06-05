@@ -1,0 +1,60 @@
+# Estudo de caso A2 - PostgreSQL 18
+services:
+  data-generator:
+    image: python:3.12-slim
+    container_name: bd2-a2-energia_iot-data-generator
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    command:
+      - python
+      - src/gerar_dados.py
+      - --rows
+      - "${A2_ROWS:-250000}"
+      - --entities
+      - "${A2_ENTITIES:-50000}"
+      - --agents
+      - "${A2_AGENTS:-600}"
+      - --categories
+      - "${A2_CATEGORIES:-24}"
+      - --events-per-record
+      - "${A2_EVENTS_PER_RECORD:-3}"
+      - --ratings
+      - "${A2_RATINGS:-50000}"
+
+  postgres:
+    image: postgres:18
+    container_name: bd2-a2-energia_iot
+    depends_on:
+      data-generator:
+        condition: service_completed_successfully
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: a2_energia
+    ports:
+      - "55506:5432"
+    volumes:
+      - pgdata-a2-energia_iot:/var/lib/postgresql
+      - ./init:/docker-entrypoint-initdb.d:ro
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=pg_stat_statements,auto_explain
+      - -c
+      - compute_query_id=on
+      - -c
+      - auto_explain.log_min_duration=700ms
+      - -c
+      - auto_explain.log_analyze=on
+      - -c
+      - auto_explain.log_buffers=on
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d a2_energia"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata-a2-energia_iot:
+    name: bd2-a2-energia_iot-pgdata
